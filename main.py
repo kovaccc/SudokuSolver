@@ -1,4 +1,3 @@
-import copy
 import timeit
 
 
@@ -9,9 +8,9 @@ def printSudokuBoard(board):
     print("\n")
 
 
-def nextEmptyField(board, field):
-    for rowIndex in range(field[0], len(board)):
-        for columnIndex in range(field[1], len(board[0])):
+def nextEmptyField(board):
+    for rowIndex in range(len(board)):
+        for columnIndex in range(len(board[0])):
             if board[rowIndex][columnIndex] == 0:
                 return rowIndex, columnIndex
     return None
@@ -36,7 +35,7 @@ def isValidNumber(board, row_index, column_index, number):
 
 def solveSudoku(rootBoard):
     stack = [(-1, -1)]
-    empty_field = nextEmptyField(rootBoard, (0, 0))
+    empty_field = nextEmptyField(rootBoard)
 
     while empty_field is not None:
         row_index = empty_field[0]
@@ -55,7 +54,7 @@ def solveSudoku(rootBoard):
             stack.append(empty_field)
             columnToAdd = 0 if empty_field[0] == 8 else empty_field[0] + 1
             rowToAdd = 0 if empty_field[1] == 8 else empty_field[1] + 1
-            empty_field = nextEmptyField(rootBoard, (rowToAdd, columnToAdd))
+            empty_field = nextEmptyField(rootBoard)
     return True
 
 
