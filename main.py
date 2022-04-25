@@ -33,28 +33,26 @@ def isValidNumber(board, row_index, column_index, number):
     return True
 
 
-def solveSudoku(rootBoard):
+def solveSudoku(board):
     stack = [(-1, -1)]
-    empty_field = nextEmptyField(rootBoard)
+    empty_field = nextEmptyField(board)
 
     while empty_field is not None:
         row_index = empty_field[0]
         column_index = empty_field[1]
-        valid_number = rootBoard[row_index][column_index] + 1
-        while valid_number < 10 and isValidNumber(rootBoard, row_index, column_index, valid_number) == False:
+        valid_number = board[row_index][column_index] + 1
+        while valid_number < 10 and isValidNumber(board, row_index, column_index, valid_number) == False:
             valid_number = valid_number + 1
 
         if valid_number == 10:
-            rootBoard[row_index][column_index] = 0
+            board[row_index][column_index] = 0
             empty_field = stack.pop()
             if empty_field == (-1, -1):
                 return False
         else:
-            rootBoard[row_index][column_index] = valid_number
-            stack.append(empty_field)
-            columnToAdd = 0 if empty_field[0] == 8 else empty_field[0] + 1
-            rowToAdd = 0 if empty_field[1] == 8 else empty_field[1] + 1
-            empty_field = nextEmptyField(rootBoard)
+            board[row_index][column_index] = valid_number
+            stack.append(empty_field)  # for backtracking
+            empty_field = nextEmptyField(board)
     return True
 
 
@@ -76,6 +74,6 @@ with open('Assignment 2 sudoku.txt') as sudokuFile:
     start = timeit.default_timer()
     for sudoku in sudokus:
         solveSudoku(sudoku)
-        printSudokuBoard(sudoku)
+        #printSudokuBoard(sudoku)
     stop = timeit.default_timer()
     print('Sudoku solving time: ', stop - start)
