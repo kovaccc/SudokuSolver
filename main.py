@@ -1,3 +1,4 @@
+import copy
 import timeit
 
 
@@ -8,9 +9,9 @@ def printSudokuBoard(board):
     print("\n")
 
 
-def nextEmptyField(board):
-    for rowIndex in range(len(board)):
-        for columnIndex in range(len(board[0])):
+def nextEmptyField(board, field):
+    for rowIndex in range(field[0], len(board)):
+        for columnIndex in range(field[1], len(board[0])):
             if board[rowIndex][columnIndex] == 0:
                 return rowIndex, columnIndex
     return None
@@ -33,25 +34,29 @@ def isValidNumber(board, row_index, column_index, number):
     return True
 
 
-def solveSudoku(board):
-    empty_field = nextEmptyField(board)
-    row_index = -1
-    column_index = -1
-    if empty_field is None:
-        return True
-    else:
+def solveSudoku(rootBoard):
+    stack = [(-1, -1)]
+    empty_field = nextEmptyField(rootBoard, (0, 0))
+
+    while empty_field is not None:
         row_index = empty_field[0]
         column_index = empty_field[1]
+        valid_number = rootBoard[row_index][column_index] + 1
+        while valid_number < 10 and isValidNumber(rootBoard, row_index, column_index, valid_number) == False:
+            valid_number = valid_number + 1
 
-    for number in range(1, 10):
-        if isValidNumber(board, row_index, column_index, number):
-            board[row_index][column_index] = number
-
-            if solveSudoku(board):
-                return True
-
-            board[row_index][column_index] = 0
-    return False
+        if valid_number == 10:
+            rootBoard[row_index][column_index] = 0
+            empty_field = stack.pop()
+            if empty_field == (-1, -1):
+                return False
+        else:
+            rootBoard[row_index][column_index] = valid_number
+            stack.append(empty_field)
+            columnToAdd = 0 if empty_field[0] == 8 else empty_field[0] + 1
+            rowToAdd = 0 if empty_field[1] == 8 else empty_field[1] + 1
+            empty_field = nextEmptyField(rootBoard, (rowToAdd, columnToAdd))
+    return True
 
 
 with open('Assignment 2 sudoku.txt') as sudokuFile:
@@ -75,4 +80,3 @@ with open('Assignment 2 sudoku.txt') as sudokuFile:
         printSudokuBoard(sudoku)
     stop = timeit.default_timer()
     print('Sudoku solving time: ', stop - start)
-
